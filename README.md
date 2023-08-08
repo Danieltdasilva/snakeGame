@@ -1,6 +1,6 @@
-I am trying to recreate a game I loved as a kid.
-The goal of the game was to score the most points. As you scored more points the got became harder.
-It honestly reminds a lot about my coding journey: As I get better at coding it becomes harder.
+I am trying to recreate a game I loved as a kid.<br>
+The goal of the game was to score the most points. As you scored more points the game became harder.<br>
+It honestly reminds a lot about my coding journey: As I get better at coding it becomes harder.<br>
 Here's a picture of what it looks like:
 
 ![image](https://github.com/Danieltdasilva/snakeGame/assets/106720042/ddac665d-5adb-41af-9bff-f3b484ec009d)
