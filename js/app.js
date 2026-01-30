@@ -10,6 +10,10 @@ const audio = new Audio('/assets/audio.mp3');
 
 const size = 30; //this is the size of the snake, moving 30pxs inside a 600px canvas
 
+let isGameRunning = false;
+let gameTimeoutId = null;
+
+
 let snake = [
   { x: 270, y: 240 }
 ];
@@ -25,7 +29,7 @@ const randomNumber = (min, max) => {
 
 const randomPosition = () => {
   const number = randomNumber(0, canvas.width - size)
-  return Math.round(number / 30) * 30
+  return Math.round(number / size) * size
 }
 
 // making the food color be random as well
@@ -44,7 +48,8 @@ const food = {
   color: randomColor()
 }
 
-let direction, loopId;
+let direction;
+
 
 // this is for the snake food
 const drawFood = () => {
@@ -117,7 +122,7 @@ const checkEat = () => {
   const head = snake[snake.length - 1]
   if (head.x == food.x && head.y == food.y) {
     incrementScore()
-    snake.push(head)
+    snake.push({ x: head.x, y: head.y })
     audio.play()
 
     let x = randomPosition()
@@ -152,33 +157,36 @@ const checkCollision = () => {
 };
 
 const gameOver = () => {
+  isGameRunning = false;
+
+  if (gameTimeoutId) {
+    clearTimeout(gameTimeoutId);
+    gameTimeoutId = null;
+  }
+
   direction = undefined;
   menu.style.display = "flex";
   finalScore.innerText = score.innerText;
   canvas.style.filter = "blur(2px)";
-}
+};
+
 
 
 // game loop where the heart of the game is
 const gameLoop = () => {
-  clearInterval(loopId)
+  if (!isGameRunning) return;
 
-  ctx.clearRect(0, 0, 600, 600)
+  ctx.clearRect(0, 0, 600, 600);
 
-  checkCollision()
-  drawGrid()
-  drawFood()
-  moveSnake()
-  drawSnake()
-  checkEat()
+  checkCollision();
+  drawGrid();
+  drawFood();
+  moveSnake();
+  drawSnake();
+  checkEat();
 
-
-  loopId = setTimeout(() => {
-    gameLoop()
-  }, 300)
-
-}
-gameLoop();
+  gameTimeoutId = setTimeout(gameLoop, 300);
+};
 
 
 //arrows to move the snake
@@ -198,8 +206,13 @@ document.addEventListener("keydown", ({ key }) => {
 })
 
 buttonPlay.addEventListener("click", () => {
-  score.innerText = "00"
-  menu.style.display = "none"
-  canvas.style.filter = "none"
-  snake = [{ x: 270, y: 240 }]
-})
+  score.innerText = "00";
+  menu.style.display = "none";
+  canvas.style.filter = "none";
+
+  snake = [{ x: 270, y: 240 }];
+  direction = undefined;
+
+  isGameRunning = true;
+  gameLoop();
+});
