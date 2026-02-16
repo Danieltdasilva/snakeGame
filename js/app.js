@@ -10,9 +10,13 @@ const audio = new Audio('/assets/audio.mp3');
 
 const size = 30; //this is the size of the snake, moving 30pxs inside a 600px canvas
 
+let speed = 300;      // starting delay (ms)
+const minSpeed = 60;  // fastest it can get
+const speedStep = 10; // how much faster per food
+
+
 let isGameRunning = false;
 let gameTimeoutId = null;
-
 
 let snake = [
   { x: 270, y: 240 }
@@ -20,6 +24,7 @@ let snake = [
 
 const incrementScore = () => {
   score.innerText = +score.innerText + 10
+  speed = Math.max(minSpeed, speed - speedStep);
 }
 
 // random movements of the food
@@ -39,7 +44,6 @@ const randomColor = () => {
   const blue = randomNumber(0, 255)
   return `rgb(${red}, ${green}, ${blue})`
 }
-
 
 
 const food = {
@@ -185,7 +189,7 @@ const gameLoop = () => {
   drawSnake();
   checkEat();
 
-  gameTimeoutId = setTimeout(gameLoop, 300);
+  gameTimeoutId = setTimeout(gameLoop, speed);
 };
 
 
@@ -205,8 +209,14 @@ document.addEventListener("keydown", ({ key }) => {
   }
 })
 
+// Show start menu on first load
+menu.style.display = "flex";
+canvas.style.filter = "blur(2px)";
+
+
 buttonPlay.addEventListener("click", () => {
   score.innerText = "00";
+  speed = 300;
   menu.style.display = "none";
   canvas.style.filter = "none";
 
