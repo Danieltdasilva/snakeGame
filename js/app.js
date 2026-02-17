@@ -16,6 +16,11 @@ let pauseOverlayText = "PAUSED"; //game is paused
 let isGameRunning = false; //checking if game is running
 let gameTimeoutId = null;
 
+let obstacles = [];
+
+const obstacleSpawnEvery = 50; // points (50 = every 5 foods if +10 each)
+const maxObstacles = 12;
+
 //size of the snake changes as game progresses
 let snake = [
   { x: 270, y: 240 }
@@ -114,6 +119,9 @@ const moveSnake = () => {
   snake.shift()
 }
 
+const samePos = (a, b) => a.x === b.x && a.y === b.y; //helping compare grid positions
+
+
 // drawing lines in the canvas
 const drawGrid = () => {
   ctx.lineWidth = 1;
@@ -132,12 +140,41 @@ const drawGrid = () => {
   }
 
 }
+//adding obstacles to make game harder
+const spawnObstacle = () => {
+  if (obstacles.length >= maxObstacles) return;
+
+  let pos = { x: randomPosition(), y: randomPosition() };
+
+  // avoid snake, food, and existing obstacles
+  while (
+    snake.some(s => samePos(s, pos)) ||
+    samePos(food, pos) ||
+    obstacles.some(o => samePos(o, pos))
+  ) {
+    pos = { x: randomPosition(), y: randomPosition() };
+  }
+
+  obstacles.push(pos);
+};
+//drawing the obstacles
+const drawObstacles = () => {
+  ctx.fillStyle = "#444";
+  obstacles.forEach(o => {
+    ctx.fillRect(o.x, o.y, size, size);
+  });
+};
+
 
 // making the food position move after snake eats it
 const checkEat = () => {
   const head = snake[snake.length - 1]
   if (head.x == food.x && head.y == food.y) {
     incrementScore()
+    const currentScore = Number(score.innerText);
+      if (currentScore % obstacleSpawnEvery === 0) {
+        spawnObstacle();
+      }
     snake.push({ x: head.x, y: head.y })
     audio.play()
 
@@ -157,21 +194,26 @@ const checkEat = () => {
 
 //checking the collision to either wall or itself before game over
 const checkCollision = () => {
-  const head = snake[snake.length - 1]
-  const canvasLimit = canvas.width - size;
+  const head = snake[snake.length - 1];
+
+  const canvasLimitX = canvas.width - size;
+  const canvasLimitY = canvas.height - size;
   const neckIndex = snake.length - 2;
 
-  const wallCollision = head.x < 0 || head.x > canvasLimit || head.y < 0 || head.y > canvasLimit;
+  const wallCollision =
+    head.x < 0 || head.x > canvasLimitX || head.y < 0 || head.y > canvasLimitY;
 
-  const selfCollision = snake.find((position, index) => {
-    return index < neckIndex && position.x == head.x && position.y == head.y
-  })
+  const selfCollision = snake.some((position, index) => {
+    return index < neckIndex && position.x === head.x && position.y === head.y;
+  });
 
-  if (wallCollision || selfCollision) {
-    gameOver()
+  const obstacleCollision = obstacles.some(o => o.x === head.x && o.y === head.y);
+
+  if (wallCollision || selfCollision || obstacleCollision) {
+    gameOver();
   }
-
 };
+
 
 //making sure game over is properly working
 const gameOver = () => {
@@ -201,12 +243,14 @@ if (isPaused) {
 
   ctx.clearRect(0, 0, 600, 600);
 
-  checkCollision();
-  drawGrid();
-  drawFood();
-  moveSnake();
-  drawSnake();
-  checkEat();
+drawGrid();
+drawFood();
+drawObstacles();
+moveSnake();
+drawSnake();
+checkEat();
+checkCollision();
+
 
   gameTimeoutId = setTimeout(gameLoop, speed);
 };
@@ -243,6 +287,7 @@ canvas.style.filter = "blur(2px)";
 //play button
 buttonPlay.addEventListener("click", () => {
   isPaused = false;
+  obstacles = [];
   score.innerText = "00";
   speed = 300;
   menu.style.display = "none";
