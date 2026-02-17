@@ -1,9 +1,12 @@
+import { saveHighScore, getHighScores } from "./highscores.js";
+
 const canvas = document.querySelector('canvas'); // adding canva
 const ctx = canvas.getContext("2d"); //2D effect
 const score = document.querySelector(".score--value"); //score of the game
 const finalScore = document.querySelector(".final-score > span"); //final score
 const menu = document.querySelector(".menu-screen"); //the starting game menu
 const buttonPlay = document.querySelector(".btn-play"); //the play button
+const leaderboardList = document.querySelector(".leaderboard-list"); //the scores list
 const audio = new Audio('/assets/audio.mp3'); //the audio
 const size = 30; //this is the size of the snake, moving 30pxs inside a 600px canvas
 
@@ -214,10 +217,27 @@ const checkCollision = () => {
   }
 };
 
+const renderHighScores = async () => {
+  const scores = await getHighScores();
+
+  leaderboardList.innerHTML = "";
+
+  scores.forEach(score => {
+    const li = document.createElement("li");
+    li.textContent = `${score.name} - ${score.score}`;
+    leaderboardList.appendChild(li);
+  });
+};
 
 //making sure game over is properly working
-const gameOver = () => {
+const gameOver = async () => {
   isGameRunning = false;
+
+  const playerName = prompt("Enter your name for the leaderboard:");
+
+  if (playerName) {
+    await saveHighScore(playerName, Number(score.innerText));
+  }
 
   if (gameTimeoutId) {
     clearTimeout(gameTimeoutId);
@@ -228,9 +248,9 @@ const gameOver = () => {
   menu.style.display = "flex";
   finalScore.innerText = score.innerText;
   canvas.style.filter = "blur(2px)";
+
+  await renderHighScores();
 };
-
-
 
 // game loop - where the heart of the game is
 const gameLoop = () => {
@@ -254,7 +274,6 @@ checkCollision();
 
   gameTimeoutId = setTimeout(gameLoop, speed);
 };
-
 
 //arrows to move the snake - event listener
 document.addEventListener("keydown", ({ key }) => {

@@ -12,21 +12,27 @@
 </head>
 
 <body>
-  <div class="score">Score: <span class="score--value">00</span></div>
+<div class="score">Score: <span class="score--value">00</span></div>
 
+<div class="menu-screen">
+  <span class="game-over">Game Over</span>
+  <span class="final-score">Score: <span>00</span></span>
+  <button class="btn-play"><span class="material-symbols-outlined">
+    play_circle
+    </span>
+    Restart
+  </button>
+</div>
+<div class="leaderboard">
+  <h3>High Scores</h3>
+  <ul class="leaderboard-list"></ul>
+</div>
 
-  <div class="menu-screen">
-    <span class="game-over">Game Over</span>
-    <span class="final-score">Score: <span>00</span></span>
-    <button class="btn-play"><span class="material-symbols-outlined">
-        play_circle
-      </span>
-      Restart
-    </button>
-  </div>
-  <canvas width="600" height="600"></canvas>
+  <!-- drawing the board where the snake goes -->
+<canvas width="600" height="600"></canvas> 
 
-  <script src="js/app.js"></script>
+<script type="module" src="js/app.js"></script>
+
 </body>
 
 </html>
