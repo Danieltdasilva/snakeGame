@@ -13,7 +13,4 @@ Whenever you hit the walls, or hit yourself, it's game over. It also shows how m
 
 As you hit the 'restart' button, it will restart the game, bringing the score back to 0.
 
-I will eventually make changes to the game, resemble the original a bit more, maybe show the highest scores, make the snake move faster as you progress towards the game, etc.
-I hope you enjoy the game as much I did making it.
-
-I had help from an instructor and mentor, Rowlane Borges, at Manual do Dev.
+The game becomes harder as you progress, making the snake move faster and with obstacles throughout the canva/board.
