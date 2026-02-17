@@ -1,33 +1,33 @@
-const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext("2d");
-
-const score = document.querySelector(".score--value");
-const finalScore = document.querySelector(".final-score > span");
-const menu = document.querySelector(".menu-screen");
-const buttonPlay = document.querySelector(".btn-play");
-
-const audio = new Audio('/assets/audio.mp3');
-
+const canvas = document.querySelector('canvas'); // adding canva
+const ctx = canvas.getContext("2d"); //2D effect
+const score = document.querySelector(".score--value"); //score of the game
+const finalScore = document.querySelector(".final-score > span"); //final score
+const menu = document.querySelector(".menu-screen"); //the starting game menu
+const buttonPlay = document.querySelector(".btn-play"); //the play button
+const audio = new Audio('/assets/audio.mp3'); //the audio
 const size = 30; //this is the size of the snake, moving 30pxs inside a 600px canvas
 
 let speed = 300;      // starting delay (ms)
 const minSpeed = 60;  // fastest it can get
 const speedStep = 10; // how much faster per food
 
-
-let isGameRunning = false;
+let isPaused = false; //checking if game is paused
+let pauseOverlayText = "PAUSED"; //game is paused
+let isGameRunning = false; //checking if game is running
 let gameTimeoutId = null;
 
+//size of the snake changes as game progresses
 let snake = [
   { x: 270, y: 240 }
 ];
 
+//increasing the score
 const incrementScore = () => {
   score.innerText = +score.innerText + 10
   speed = Math.max(minSpeed, speed - speedStep);
 }
 
-// random movements of the food
+// random movements of the snake food
 const randomNumber = (min, max) => {
   return Math.round(Math.random() * (max - min) + min)
 }
@@ -45,7 +45,7 @@ const randomColor = () => {
   return `rgb(${red}, ${green}, ${blue})`
 }
 
-
+// randomnly positioning the food
 const food = {
   x: randomPosition(),
   y: randomPosition(),
@@ -55,7 +55,7 @@ const food = {
 let direction;
 
 
-// this is for the snake food
+// this is the random food color
 const drawFood = () => {
   const { x, y, color } = food
   ctx.shadowColor = color
@@ -65,7 +65,7 @@ const drawFood = () => {
   ctx.shadowBlur = 0
 }
 
-// drawing of the snake
+// random size of the snake
 const drawSnake = () => {
   ctx.fillStyle = "#ddd"
 
@@ -79,6 +79,18 @@ const drawSnake = () => {
     ctx.fillRect(position.x, position.y, size, size)
   })
 }
+
+//pausing the game
+const drawPaused = () => {
+  ctx.fillStyle = "rgba(0,0,0,0.5)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "white";
+  ctx.font = "48px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(pauseOverlayText, canvas.width / 2, canvas.height / 2);
+};
+
 
 // movements of the snake
 const moveSnake = () => {
@@ -143,6 +155,7 @@ const checkEat = () => {
   }
 }
 
+//checking the collision to either wall or itself before game over
 const checkCollision = () => {
   const head = snake[snake.length - 1]
   const canvasLimit = canvas.width - size;
@@ -160,6 +173,7 @@ const checkCollision = () => {
 
 };
 
+//making sure game over is properly working
 const gameOver = () => {
   isGameRunning = false;
 
@@ -176,9 +190,14 @@ const gameOver = () => {
 
 
 
-// game loop where the heart of the game is
+// game loop - where the heart of the game is
 const gameLoop = () => {
   if (!isGameRunning) return;
+
+if (isPaused) {
+  drawPaused();
+  return;
+}
 
   ctx.clearRect(0, 0, 600, 600);
 
@@ -193,8 +212,16 @@ const gameLoop = () => {
 };
 
 
-//arrows to move the snake
+//arrows to move the snake - event listener
 document.addEventListener("keydown", ({ key }) => {
+  if (key === "p" || key === "P") {
+  isPaused = !isPaused;
+
+  if (!isPaused && isGameRunning) {
+    gameLoop(); // resume
+  }
+  return;
+}
   if (key == "ArrowRight" && direction != "left") {
     direction = "right"
   }
@@ -213,8 +240,9 @@ document.addEventListener("keydown", ({ key }) => {
 menu.style.display = "flex";
 canvas.style.filter = "blur(2px)";
 
-
+//play button
 buttonPlay.addEventListener("click", () => {
+  isPaused = false;
   score.innerText = "00";
   speed = 300;
   menu.style.display = "none";
