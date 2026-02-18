@@ -62,10 +62,9 @@ app.get("/api/scores", (req, res) => {
 app.post("/api/scores", (req, res) => {
   const { name, score } = req.body;
 
-  if (!name || score === undefined) {
-    return res.status(400).json({ error: "Name and score required" });
-  }
-
+  if (!name || name === "null" || name.trim() === "" || score === undefined) {
+  return res.status(400).json({ error: "Valid name and score required" });
+}
   db.run(
     "INSERT OR IGNORE INTO players (name) VALUES (?)",
     [name],
