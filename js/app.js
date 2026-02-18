@@ -248,8 +248,6 @@ const gameOver = async () => {
   menu.style.display = "flex";
   finalScore.innerText = score.innerText;
   canvas.style.filter = "blur(2px)";
-
-  await renderHighScores();
 };
 
 // game loop - where the heart of the game is
@@ -276,41 +274,55 @@ checkCollision();
 };
 
 //arrows to move the snake - event listener
-document.addEventListener("keydown", ({ key }) => {
-  if (key === "p" || key === "P") {
-  isPaused = !isPaused;
+document.addEventListener("keydown", (event) => {
+  const { key } = event;
 
-  if (!isPaused && isGameRunning) {
-    gameLoop(); // resume
+  // Stop arrow keys from scrolling the page
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(key)) {
+    event.preventDefault();
   }
-  return;
-}
-  if (key == "ArrowRight" && direction != "left") {
-    direction = "right"
+
+  if (key === "p" || key === "P") {
+    isPaused = !isPaused;
+
+    if (!isPaused && isGameRunning) {
+      gameLoop(); // resume
+    }
+    return;
   }
-  if (key == "ArrowLeft" && direction != "right") {
-    direction = "left"
+
+  if (key === "ArrowRight" && direction !== "left") {
+    direction = "right";
   }
-  if (key == "ArrowDown" && direction != "up") {
-    direction = "down"
+
+  if (key === "ArrowLeft" && direction !== "right") {
+    direction = "left";
   }
-  if (key == "ArrowUp" && direction != "down") {
-    direction = "up"
+
+  if (key === "ArrowDown" && direction !== "up") {
+    direction = "down";
   }
-})
+
+  if (key === "ArrowUp" && direction !== "down") {
+    direction = "up";
+  }
+});
 
 // Show start menu on first load
 menu.style.display = "flex";
 canvas.style.filter = "blur(2px)";
 
 //play button
-buttonPlay.addEventListener("click", () => {
+buttonPlay.addEventListener("click", async () => {
   isPaused = false;
   obstacles = [];
   score.innerText = "00";
   speed = 300;
+
   menu.style.display = "none";
   canvas.style.filter = "none";
+
+  await renderHighScores();
 
   snake = [{ x: 270, y: 240 }];
   direction = undefined;

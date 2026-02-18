@@ -12,7 +12,9 @@ app.use(cors({
 
 app.use(express.json());
 
-const db = new sqlite3.Database("./database.sqlite");
+const path = require("path");
+const dbPath = path.join(__dirname, "database.sqlite");
+const db = new sqlite3.Database(dbPath);
 
 // Create table if not exists
 db.run(`
@@ -24,10 +26,10 @@ db.run(`
   )
 `);
 
-// GET Top 10 Scores
+// GET Top 3 Scores
 app.get("/api/scores", (req, res) => {
   db.all(
-    "SELECT * FROM highscores ORDER BY score DESC LIMIT 10",
+    "SELECT * FROM highscores ORDER BY score DESC LIMIT 3",
     [],
     (err, rows) => {
       if (err) return res.status(500).json(err);
