@@ -1,6 +1,6 @@
-I am proud of what this game has become; a game I loved as a kid.<br>
+<p>I am proud of what this game has become; a game I loved as a kid.<br>
 The previous versions of this game, I only had the high score and a simple game. For this v1.0, I have implemented player name, stats, made the game harder by adding obstacles after every 50 points while the snake simultaneously gets faster. <br>
-I've been proudly working on this game for the last 3 years. It shows everything I've learned these last few years.<br>
+I've been proudly working on this game for the last 3 years. It shows everything I've learned these last few years.<br></p>
 
 <h3>🚀 Features</h3>
 <ul>
@@ -54,5 +54,7 @@ I've been proudly working on this game for the last 3 years. It shows everything
 <img src="https://github.com/Danieltdasilva/snakeGame/assets/106720042/ddac665d-5adb-41af-9bff-f3b484ec009d" alt="main frame">
 <img src="https://github.com/Danieltdasilva/snakeGame/assets/106720042/e503cd79-9527-434d-ba8b-c9f1628318b0" alt="game over">
 <br>
-<h4>V1.0 Game</h4>
-<img src="/workspaces/snakeGame/assets/mainframe-new.png" alt="new main frame">
+
+<p>I am very proud of this game and I hope the next person can enjoy it as much as I did while making it.<br></p>
+<h4>Next step:</h4>
+<b>Deploy it</b>
