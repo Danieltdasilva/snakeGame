@@ -102,11 +102,12 @@ app.get("/api/player/:name", (req, res) => {
   db.get(
     `
     SELECT 
-      COUNT(*) as totalGames,
-      MAX(score) as highestScore,
-      ROUND(AVG(score), 2) as averageScore
-    FROM highscores
-    WHERE name = ?
+      COUNT(scores.id) as totalGames,
+      MAX(scores.score) as highestScore,
+      ROUND(AVG(scores.score), 2) as averageScore
+    FROM scores
+    JOIN players ON scores.playerId = players.id
+    WHERE players.name = ?
     `,
     [name],
     (err, row) => {
@@ -114,9 +115,9 @@ app.get("/api/player/:name", (req, res) => {
 
       res.json({
         name,
-        totalGames: row.totalGames || 0,
-        highestScore: row.highestScore || 0,
-        averageScore: row.averageScore || 0
+        totalGames: row?.totalGames || 0,
+        highestScore: row?.highestScore || 0,
+        averageScore: row?.averageScore || 0
       });
     }
   );
@@ -126,16 +127,27 @@ app.get("/api/player/:name", (req, res) => {
 app.delete("/api/player/:name", (req, res) => {
   const { name } = req.params;
 
-  db.run(
-    "DELETE FROM highscores WHERE name = ?",
+  db.get(
+    "SELECT id FROM players WHERE name = ?",
     [name],
-    function (err) {
+    (err, playerRow) => {
       if (err) return res.status(500).json(err);
+      if (!playerRow) {
+        return res.status(404).json({ error: "Player not found" });
+      }
 
-      res.json({
-        message: `Stats reset for ${name}`,
-        deletedRows: this.changes
-      });
+      db.run(
+        "DELETE FROM scores WHERE playerId = ?",
+        [playerRow.id],
+        function (err) {
+          if (err) return res.status(500).json(err);
+
+          res.json({
+            message: `Stats reset for ${name}`,
+            deletedRows: this.changes
+          });
+        }
+      );
     }
   );
 });

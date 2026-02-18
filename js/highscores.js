@@ -1,4 +1,5 @@
 const API_URL = "https://orange-space-potato-5jqj76gxxxr2pp7r-3000.app.github.dev/api/scores";
+const API_BASE = "https://orange-space-potato-5jqj76gxxxr2pp7r-3000.app.github.dev";
 
 
 export const saveHighScore = async (name, score) => {
@@ -17,12 +18,13 @@ export const getHighScores = async () => {
 };
 
 export const getPlayerProfile = async (name) => {
-  const response = await fetch(`/api/player/${encodeURIComponent(name)}`);
+  const response = await fetch(`${API_BASE}/api/player/${encodeURIComponent(name)}`);
   return await response.json();
 };
 
 export const resetPlayerStats = async (name) => {
-  await fetch(`/api/player/${encodeURIComponent(name)}`, {
+  await fetch(`${API_BASE}/api/player/${encodeURIComponent(name)}`, {
     method: "DELETE"
   });
 };
+

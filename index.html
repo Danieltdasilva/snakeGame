@@ -1,57 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-  <link rel="stylesheet" href="css/styles.css">
-
-  <title>Snake Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+  />
+  <link rel="stylesheet" href="css/styles.css" />
+  <title>Snake Pro v1.0</title>
 </head>
+
 <body>
-<div class="game-container">
-  <div class="menu-screen">
-    <span class="game-over">Game Over</span>
-    <span class="final-score">Score: <span>00</span></span>
-    <button class="btn-play">
-      <span class="material-symbols-outlined">
-        play_circle
+
+  <!-- RIGHT SIDE HUD -->
+  <div class="hud">
+    <div class="score">
+      Score:
+      <span class="score--value">00</span>
+    </div>
+
+    <div class="leaderboard">
+      <h3>High Scores</h3>
+      <ul class="leaderboard-list"></ul>
+    </div>
+
+    <div class="player-profile">
+      <h3>Player Stats</h3>
+
+      <p class="active-player">
+        Playing as:
+        <span class="active-player-name"></span>
+      </p>
+
+      <p>Total Games:
+        <span class="profile-games"></span>
+      </p>
+
+      <p>Highest Score:
+        <span class="profile-high"></span>
+      </p>
+
+      <p>Average Score:
+        <span class="profile-average"></span>
+      </p>
+
+      <button class="btn-reset">Reset My Stats</button>
+      <button class="btn-change-player">Change Player</button>
+    </div>
+  </div>
+
+  <!-- GAME AREA -->
+  <div class="game-container">
+
+    <!-- GAME OVER / START SCREEN -->
+    <div class="menu-screen">
+      <span class="game-over">Snake Pro</span>
+
+      <span class="final-score">
+        Final Score:
+        <span>00</span>
       </span>
-      Restart
-    </button>
+
+      <div class="player-input">
+        <input
+          type="text"
+          class="player-name-input"
+          placeholder="Enter your name"
+        />
+        <button class="btn-set-player">Set Player</button>
+      </div>
+
+      <button class="btn-play">
+        <span class="material-symbols-outlined">
+          play_circle
+        </span>
+        Start Game
+      </button>
+    </div>
+
+    <!-- GAME CANVAS -->
+    <canvas width="600" height="600"></canvas>
+
   </div>
 
-  <canvas width="600" height="600"></canvas>   <!-- drawing the board where the snake goes -->
-</div>
+  <p class="version">Snake Pro v1.0</p>
 
-<div class="hud">
-  <div class="score">
-    Score: <span class="score--value">00</span>
-  </div>
-
-  <div class="leaderboard">
-    <h3>High Scores</h3>
-    <ul class="leaderboard-list"></ul>
-  </div>
-  <div class="player-profile">
-  <h3>Player Stats</h3>
-  <p>Name: <span class="profile-name"></span></p>
-  <p>Total Games: <span class="profile-games"></span></p>
-  <p>Highest Score: <span class="profile-high"></span></p>
-  <p>Average Score: <span class="profile-average"></span></p>
-  <button class="btn-reset">Reset My Stats</button>
-  <button class="btn-change-player">Change Player</button>
-
-
-</div>
-</div>
-
-
-
-<script type="module" src="js/app.js"></script>
-
+  <script type="module" src="js/app.js"></script>
 </body>
-
 </html>

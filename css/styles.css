@@ -20,6 +20,11 @@ canvas {
   display: block;
   margin: 0 auto;
   margin-top: 40px;
+  box-shadow: 0 0 20px rgba(0, 255, 100, 0.2);
+}
+
+button:hover {
+  opacity: 0.85;
 }
 
 .game-container {
@@ -125,4 +130,34 @@ canvas {
   background: #2980b9;
   color: white;
   font-weight: 600;
+}
+
+.player-input {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.player-name-input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+.btn-set-player {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #27ae60;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.version {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  font-size: 0.7rem;
+  opacity: 0.4;
 }
