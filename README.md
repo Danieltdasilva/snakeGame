@@ -51,3 +51,8 @@ I've been proudly working on this game for the last 3 years. It shows everything
 <br>
 <h3>📸 Screenshot</h3>
 <h4>Beta Game Screenshots</h4>
+<img src="https://github.com/Danieltdasilva/snakeGame/assets/106720042/ddac665d-5adb-41af-9bff-f3b484ec009d" alt="main frame">
+<img src="https://github.com/Danieltdasilva/snakeGame/assets/106720042/e503cd79-9527-434d-ba8b-c9f1628318b0" alt="game over">
+<br>
+<h4>V1.0 Game</h4>
+<img src="/workspaces/snakeGame/assets/mainframe-new.png" alt="new main frame">
