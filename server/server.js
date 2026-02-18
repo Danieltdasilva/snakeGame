@@ -9,16 +9,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend files (index.html, css, js, assets)
-app.use(express.static(__dirname));
+// ============================
+// DATABASE SETUP
+// ============================
 
-// Database setup
 const dbPath = path.join(__dirname, "database.sqlite");
 const db = new sqlite3.Database(dbPath);
-
-// ============================
-// DATABASE TABLES
-// ============================
 
 // Players table
 db.run(`
@@ -39,7 +35,6 @@ db.run(`
     FOREIGN KEY (playerId) REFERENCES players(id)
   )
 `);
-
 
 // ============================
 // API ROUTES
@@ -71,14 +66,12 @@ app.post("/api/scores", (req, res) => {
     return res.status(400).json({ error: "Name and score required" });
   }
 
-  // Insert player if not exists
   db.run(
     "INSERT OR IGNORE INTO players (name) VALUES (?)",
     [name],
     function (err) {
       if (err) return res.status(500).json(err);
 
-      // Get player ID
       db.get(
         "SELECT id FROM players WHERE name = ?",
         [name],
@@ -88,7 +81,6 @@ app.post("/api/scores", (req, res) => {
             return res.status(404).json({ error: "Player not found" });
           }
 
-          // Insert score
           db.run(
             "INSERT INTO scores (playerId, score) VALUES (?, ?)",
             [playerRow.id, score],
@@ -160,18 +152,18 @@ app.delete("/api/player/:name", (req, res) => {
   );
 });
 
-
 // ============================
-// FALLBACK (MUST BE LAST)
+// SERVE FRONTEND (IMPORTANT)
 // ============================
 
-app.get("*", (req, res) => {
+app.use(express.static(__dirname));
+
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-
 // ============================
-// START SERVER
+// START SERVER (ONLY ONCE)
 // ============================
 
 app.listen(PORT, () => {
