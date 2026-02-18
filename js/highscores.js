@@ -15,3 +15,14 @@ export const getHighScores = async () => {
   const response = await fetch(API_URL);
   return await response.json();
 };
+
+export const getPlayerProfile = async (name) => {
+  const response = await fetch(`/api/player/${encodeURIComponent(name)}`);
+  return await response.json();
+};
+
+export const resetPlayerStats = async (name) => {
+  await fetch(`/api/player/${encodeURIComponent(name)}`, {
+    method: "DELETE"
+  });
+};

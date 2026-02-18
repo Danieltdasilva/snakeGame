@@ -1,4 +1,11 @@
-import { saveHighScore, getHighScores } from "./highscores.js";
+import { saveHighScore, getHighScores, getPlayerProfile, resetPlayerStats } from "./highscores.js";
+
+const profileName = document.querySelector(".profile-name");
+const profileGames = document.querySelector(".profile-games");
+const profileHigh = document.querySelector(".profile-high");
+const profileAverage = document.querySelector(".profile-average");
+const resetButton = document.querySelector(".btn-reset");
+const changePlayerButton = document.querySelector(".btn-change-player");
 
 const canvas = document.querySelector('canvas'); // adding canva
 const ctx = canvas.getContext("2d"); //2D effect
@@ -18,6 +25,55 @@ let isPaused = false; //checking if game is paused
 let pauseOverlayText = "PAUSED"; //game is paused
 let isGameRunning = false; //checking if game is running
 let gameTimeoutId = null;
+
+let currentPlayer = localStorage.getItem("playerName");
+
+const askForPlayerName = () => {
+  let nameInput = "";
+
+  while (!nameInput || nameInput.trim() === "" || nameInput === "null") {
+    nameInput = prompt("Enter your name:");
+    if (nameInput === null) continue; // if cancel, ask again
+  }
+
+  currentPlayer = nameInput.trim();
+  localStorage.setItem("playerName", currentPlayer);
+};
+
+if (!currentPlayer || currentPlayer === "null") {
+  askForPlayerName();
+}
+
+const renderPlayerProfile = async () => {
+  if (!currentPlayer) return;
+
+  const profile = await getPlayerProfile(currentPlayer);
+
+  profileName.textContent = profile.name;
+  profileGames.textContent = profile.totalGames;
+  profileHigh.textContent = profile.highestScore;
+  profileAverage.textContent = profile.averageScore;
+};
+
+resetButton.addEventListener("click", async () => {
+  if (!currentPlayer) return;
+
+  const confirmReset = confirm("Are you sure you want to reset your stats?");
+  if (!confirmReset) return;
+
+  await resetPlayerStats(currentPlayer);
+
+  await renderHighScores();
+  await renderPlayerProfile();
+});
+
+changePlayerButton.addEventListener("click", async () => {
+  localStorage.removeItem("playerName");
+  askForPlayerName();
+
+  await renderHighScores();
+  await renderPlayerProfile();
+});
 
 let obstacles = [];
 
@@ -233,10 +289,8 @@ const renderHighScores = async () => {
 const gameOver = async () => {
   isGameRunning = false;
 
-  const playerName = prompt("Enter your name for the leaderboard:");
-
-  if (playerName) {
-    await saveHighScore(playerName, Number(score.innerText));
+  if (currentPlayer) {
+    await saveHighScore(currentPlayer, Number(score.innerText));
   }
 
   if (gameTimeoutId) {
@@ -248,6 +302,9 @@ const gameOver = async () => {
   menu.style.display = "flex";
   finalScore.innerText = score.innerText;
   canvas.style.filter = "blur(2px)";
+
+  await renderHighScores();
+  await renderPlayerProfile();
 };
 
 // game loop - where the heart of the game is
@@ -322,11 +379,13 @@ buttonPlay.addEventListener("click", async () => {
   menu.style.display = "none";
   canvas.style.filter = "none";
 
-  await renderHighScores();
-
   snake = [{ x: 270, y: 240 }];
   direction = undefined;
 
   isGameRunning = true;
   gameLoop();
 });
+
+renderHighScores();
+renderPlayerProfile();
+
