@@ -156,10 +156,11 @@ app.delete("/api/player/:name", (req, res) => {
 // SERVE FRONTEND (IMPORTANT)
 // ============================
 
-app.use(express.static(__dirname));
+const publicPath = path.join(__dirname, "..");
+app.use(express.static(publicPath));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(publicPath, "index.html"));
 });
 
 // ============================
