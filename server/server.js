@@ -1,21 +1,24 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
-// Serve frontend files
+
+// Serve frontend files (index.html, css, js, assets)
 app.use(express.static(__dirname));
 
-const path = require("path");
+// Database setup
 const dbPath = path.join(__dirname, "database.sqlite");
 const db = new sqlite3.Database(dbPath);
+
+// ============================
+// DATABASE TABLES
+// ============================
 
 // Players table
 db.run(`
@@ -36,6 +39,11 @@ db.run(`
     FOREIGN KEY (playerId) REFERENCES players(id)
   )
 `);
+
+
+// ============================
+// API ROUTES
+// ============================
 
 // GET Top 3 Scores
 app.get("/api/scores", (req, res) => {
@@ -63,21 +71,24 @@ app.post("/api/scores", (req, res) => {
     return res.status(400).json({ error: "Name and score required" });
   }
 
-  //Insert player if it doesn't exist
+  // Insert player if not exists
   db.run(
     "INSERT OR IGNORE INTO players (name) VALUES (?)",
     [name],
     function (err) {
       if (err) return res.status(500).json(err);
 
-      //Get player name
+      // Get player ID
       db.get(
         "SELECT id FROM players WHERE name = ?",
         [name],
         (err, playerRow) => {
           if (err) return res.status(500).json(err);
+          if (!playerRow) {
+            return res.status(404).json({ error: "Player not found" });
+          }
 
-          // Insert score linked to player named above
+          // Insert score
           db.run(
             "INSERT INTO scores (playerId, score) VALUES (?, ?)",
             [playerRow.id, score],
@@ -92,16 +103,7 @@ app.post("/api/scores", (req, res) => {
   );
 });
 
-// Fallback to index.html for root
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
-// GET Player Profile Stats
+// GET Player Profile
 app.get("/api/player/:name", (req, res) => {
   const { name } = req.params;
 
@@ -156,4 +158,22 @@ app.delete("/api/player/:name", (req, res) => {
       );
     }
   );
+});
+
+
+// ============================
+// FALLBACK (MUST BE LAST)
+// ============================
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+
+// ============================
+// START SERVER
+// ============================
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
