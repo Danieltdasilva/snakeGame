@@ -9,8 +9,9 @@ app.use(cors({
   origin: true,
   credentials: true
 }));
-
 app.use(express.json());
+// Serve frontend files
+app.use(express.static(__dirname));
 
 const path = require("path");
 const dbPath = path.join(__dirname, "database.sqlite");
@@ -89,6 +90,11 @@ app.post("/api/scores", (req, res) => {
       );
     }
   );
+});
+
+// Fallback to index.html for root
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.listen(PORT, () => {
